@@ -1,0 +1,45 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@1,200;1,300;1,500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200&display=swap'); */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@1,500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap');
+
+
+/* FONDO GRADIENTE */
+/* background: linear-gradient(to right bottom,
+      rgba(255, 255, 255, 0.7),
+      rgba(255, 255, 255, 0.3)); */
+
+
+/* body {
+    background-image: repeating-linear-gradient(405deg, rgba(0, 0, 0, 0.06) 0px, rgba(0, 0, 0, 0.06) 2px, transparent 2px, transparent 4px), linear-gradient(450deg, rgb(0, 0, 0), rgb(0, 0, 0));
+}
+ */
+
+body {
+    background-color: #000;
+    /* Color de fondo negro */
+    background-image: url('./nodes.jpg');
+    /* Ruta a la imagen de fondo */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+p {
+    font-family: Poppins;
+    font-size: 13px;
+    color: rgb(255, 255, 255);
+    text-align: center;
+}
+
+h4 {
+    font-family: Poppins;
+    font-size: 20PX;
+    color: rgb(255, 255, 255);
+    text-align: center;
+}
+
+/* .home-layout {
+    background-image: url('./nodes.jpg');
+} */
