@@ -29,146 +29,263 @@ import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output, State
 
 
-def button_client(client, coacred, id_num, color):
-    #print(f"color -> {color}")
-    # id_num prop es unica para cada boton
-
-    if coacred is not None:
-        # print(coacred)
-        # print(type(coacred))
-        div = html.Div([dbc.Button(
-            id={
-                'type': 'dynamic-dpn-ctg',
-                'index': id_num}, type='submit',
-            children=client,  className=f'client_button2_nc {color} coac_head'), dbc.Button(id=f'coacred_button {coacred}', type='submit',
-                                                                                            children='Coacreditado', className='client_button3'),
-            dbc.Popover(
-            [
-                dbc.PopoverHeader(
-                    f"El cliente {client} es asociado con el coacreditado"),
-                dbc.PopoverBody(
-                    f" -> {coacred}"),
-            ],
-            target=f'coacred_button {coacred}',
-            trigger="click",
-            style={'background-color': 'white', 'border': 'solid',
-                   'border-color': 'gray', 'border-radius': '5px', 'font-family': 'Poppins'}
-        )], style={'display': 'flex', 'widht': '100%', 'height': '50%', 'justify-content': 'space-around', 'margin': 'auto'}
-        )
-
-    else:
-        leng = "coac_head" if len(client) > 60 else "client_head"
-        div = html.Div([dbc.Button(id={
-            'type': 'dynamic-dpn-ctg',
-            'index': id_num}, type='submit',
-            children=client, className=f'client_button2_nc {color} {leng}')], style={'display': 'flex', 'widht': '100%', 'height': '50%', 'justify-content': 'center', 'margin': 'auto'}
-        )
-    return div
-
-
-def metrica_cliente(cliente, bin1, bin2, shortcut_key, metricas_mul, coacred, id_num):
-
-    bin1List = []
-    n = 0
-    for e in bin1:
-        if e == 1:
-            # Cuando cumple, se le dará el estilo y color verde a la casilla (Si es una metrica seleccionada en la tabla de shortcuts, la letra sera de otro color)
-            if metricas_mul[n] == shortcut_key:
-                #print(f'bin1 == {metricas_mul[n]}, {shortcut_key}')
-                #print(f'{metricas_mul[n]} == {shortcut_key}')
-                bin1List.append('grid-box-color-2_1')
-            else:
-                bin1List.append('grid-box-color-2')
-        elif e == 0:
-            # Cuando no cumple, se le dará el estilo y color rojo a la casilla
-            if metricas_mul[n] == shortcut_key:
-                #print(f'{metricas_mul[n]} == {shortcut_key}')
-                bin1List.append('grid-box-color-1_1')
-            else:
-                bin1List.append('grid-box-color-1')
-        n += 1
-
-    n = 0
-    bin2List = []
-    for e in bin2:
-        if e == 1:
-            # Cuando cumple, se le dará el estilo y color verde a la casilla
-            if metricas_mul[n] == shortcut_key:
-                #print(f'bin2 == {metricas_mul[n]}, {shortcut_key}')
-                bin2List.append('grid-box-color-2')
-            else:
-                bin2List.append('grid-box-color-2')
-        elif e == 0:
-            # Cuando no cumple, se le dará el estilo y color rojo a la casilla
-            if metricas_mul[n] == shortcut_key:
-                #print(f'{metricas_mul[n]} == {shortcut_key}')
-                bin2List.append('grid-box-color-1')
-            else:
-                bin2List.append('grid-box-color-1')
-        n += 1
-
-    cuadricula0 = html.Div([html.Div(html.H5('FE'), className=bin1List[0]), html.Div(html.H5('AS'), className=bin1List[1]), html.Div(html.H5('DB'), className=bin1List[2]),
-                            html.Div(html.H5('AP'), className=bin1List[3]), html.Div(html.H5('RMY'), className=bin1List[4]), html.Div(html.H5('RMN'), className=bin1List[5]), html.Div(html.H5('RF'), className=bin1List[6]), html.Div(html.H5('HHI'), className=bin1List[7]), html.Div(html.H5('AE'), className=bin1List[8]), html.Div(html.H5('DFC'), className=bin1List[9])], className='grid-box2')
-
-    cuadricula1 = html.Div([html.Div(html.H5('FE'), className=bin2List[0]), html.Div(html.H5('AS'), className=bin2List[1]), html.Div(html.H5('DB'), className=bin2List[2]),
-                            html.Div(html.H5('AP'), className=bin2List[3]), html.Div(html.H5('RMY'), className=bin2List[4]), html.Div(html.H5('RMN'), className=bin2List[5]), html.Div(html.H5('RF'), className=bin2List[6]), html.Div(html.H5('HHI'), className=bin2List[7]), html.Div(html.H5('AE'), className=bin2List[8]), html.Div(html.H5('DFC'), className=bin2List[9])], className='grid-box')
-
-    #print(f"bin2 -> {bin2} -> sum  {sum(bin2)}")
-    # if sum(bin2) >= 4:
-    #     color = "red_color"
-    if sum(bin2) <= 5:  # con 5 rojos
-        color = "red_color"
-    elif sum(bin2) == 7 or sum(bin2) == 6:  # con 3 o 4 rojos
-        color = "yellow_color"
-    else:
-        color = "blue_color"
-    div = html.Div([
-
-        html.Div([button_client(cliente, coacred, id_num, color)], style={
-                 'display': 'flex', 'justify-content': 'center', 'align-items': 'center', 'width': '320px', 'margin': 'auto', 'padding-top': '5px', 'margin-bottom': '5px'}),
-
-        html.Div([
-
-            html.Div([html.Div([html.H4('CRITERIOS DE APROBACIÓN DE MES BASE', style={'display': 'flex', 'flex': '1', 'text-align': 'center', 'color': 'white', 'font-size': 10, 'height': '50%', 'margin': 'auto', 'justify-content': 'center', 'align-items': 'center'}),
-                                ], className='mainFlex-box')]),
-
-            html.Div([html.Div([html.H4('PROMEDIO U3M', style={'display': 'flex', 'flex': '1', 'padding-top': '2%', 'color': 'white', 'font-size': 10, 'height': '50%', 'margin': 'auto', 'justify-content': 'center', 'align-items': 'center'}),
-                                ], className='mainFlex-box')]),
-
-        ], className='mainFlex'),
-
-        html.Div([cuadricula0, cuadricula1], className='mainFlex')
-
-
-    ], className='mainContainer')
-
-    return div
-
-
-modal = html.Div(
+def card_introduction(title, ptext, suptitle):
+    card = dbc.Card(
     [
-        dbc.Button("Diseña tu estudio de crédito",
-                   id="open", style={'width': '250px'}),
+        dbc.Row(
+            [
+                dbc.Col(
+                    dbc.CardImg(
+                        src="https://avatars.githubusercontent.com/u/92005917?s=400&u=d4549d3393148a3e2fea015801e205264d5b65a5&v=4",
+                        className="img-fluid rounded-start",
+                    ),
+                    className="col-md-4",
+                ),
+                dbc.Col(
+                    dbc.CardBody(
+                        [
+                            
+                            html.H4(title, className="card-title", style={"color":"white"}),
+                            html.Small(
+                                suptitle,
+                                className="card-text text-muted",
+                                style={"align-items":"center"}
+                            ),
+                            html.P(
+                                ptext,
+                                className="card-text",
+                                style={"text-align": "justify"}
+                            ),
+                        ]
+                    ),
+                    className="col-md-8",
+                ),
+            ],
+            className="g-0 d-flex align-items-center", style={"background-color":"#1a1d20"},
+        )
+    ],
+    className="mb-3",
+    style={"maxWidth": "540px", "color":"white", "background-color":"#212428"},
+)
 
+    return card
 
-        dbc.Modal([
-            dbc.ModalHeader("Diseña tu estudio de crédito"),
-            dbc.ModalBody([
+#, style={"border":"solid", "border-color":"black","background-color":"black", "color":"white", "border-radius":"10px", "margin":"auto", "width":"40%"}
+def card_content(header, ptext, badge = None, bcgc = False):
+
+    card_content_expl = [
+        dbc.CardHeader([html.H5(header, className="legend_2", style={"font-size":"20px"}), badge], style={"border-color":"white", "color":"white"}),
+        dbc.CardBody(
+            [
+                #html.H5(title, className="card-title", style={"color":"white"}),
                 html.P(
-                    'Selecciona las opciones acorde al cliente que le deseas realizar el estudio de crédito'),
+                    ptext,
+                    className="card-text",
+                    style={"color":"white", "text-align": "justify"}
+                ),
             ]
-            ),
-            dbc.ModalFooter(
-                dbc.Button("Close", id="close", className="ml-auto")
-            ),
-        ],
-            id="modal",
-            is_open=False,    # True, False
-            size="sm",        # "sm", "lg", "xl"
-            backdrop=True,    # True, False or Static for modal to not be closed by clicking on backdrop
-            scrollable=True,  # False or True if modal has a lot of text
-            centered=True,    # True, False
-            fade=True         # True, False
         ),
     ]
+
+    return dbc.Row([dbc.Col(dbc.Card(card_content_expl, color=bcgc, inverse=True))]) if bcgc else dbc.Row([dbc.Card(card_content_expl, color="light", outline=True, style={"background-color":"transparent"})])
+
+
+def badge_button(text, id, id_num):
+    if text == 'Available':
+        color = "success"
+    else:
+        color = "secondary"
+    return html.Div([dbc.Badge(text, color=color, className="me-1", style={"width":"25%", "height":"20px"}), html.Div([], style={"width":"50%"}),dbc.Button("Select", id={
+                'type': 'dynamic-dpn-ctg',
+                'index': id_num},outline=True, color="light", className="me-1", size="sm", style={"width":"25%", "height":"28px"})], style={"display":"flex"})
+
+def encontrar_diferencia(lista1, lista2):
+    lista1, lista2 = [0 if elemento is None else elemento for elemento in lista1], [0 if elemento is None else elemento for elemento in lista2]
+    for i in range(len(lista1)):
+        if lista1[i] > lista2[i]:
+            return i
+    return None
+
+
+def button_download_resume():
+    return html.Div([
+        dbc.Button("Download resume", id="btn_xlsx", color="success", className="me-1"),
+    dcc.Download(id="download-dataframe-xlsx")
+    ], style={"width":"30%"})
+
+def social_bar():
+    soc_bar = html.Div([
+        html.A(
+            href="https://github.com/alexisrangelcalvo",
+            children=[
+                html.Img(src="https://img.uxwing.com/wp-content/themes/uxwing/download/brands-social-media/github-icon.svg", className="set-img2", style={"border-radius":"8px", "background-color":"white", "margin-right": "5px"})
+            ]
+        ),
+        html.A(
+            href="https://rpubs.com/alexisrangel",
+            children=[
+                html.Img(src="https://storage.scolary.com/storage/file/public/38871d5b-8187-47a2-aeb8-17e44c7dbb83.svg", className="set-img2", style={"border-radius":"12px"})
+            ]
+        ),
+        html.A(
+            href="https://www.instagram.com/",
+            children=[
+                html.Img(src="https://www.logo.wine/a/logo/YouTube/YouTube-Icon-Full-Color-Logo.wine.svg", className="set-img2")
+            ]
+        ),
+        html.A(
+            href="https://www.linkedin.com/",
+            children=[
+                html.Img(src="https://img.uxwing.com/wp-content/themes/uxwing/download/brands-social-media/twitter-app-icon.svg", className="set-img2")
+            ]
+        ),
+    ], style={"display":"flex", "align-items":"center",  "width":"25%"})
+    return soc_bar
+
+
+card_content2 = [
+    dbc.CardHeader("Card header"),
+    dbc.CardBody(
+        [
+            html.H5("Card title", className="card-title"),
+            html.P(
+                "This is some card content that we'll reuse",
+                className="card-text",
+            ),
+        ]
+    ),
+]
+
+def navbar_function(brand, href):
+    PLOTLY_LOGO = "https://images.plot.ly/logo/new-branding/plotly-logomark.png"
+    navbar = dbc.Navbar(
+    dbc.Container(
+        [
+            html.A(
+                # Use row and col to control vertical alignment of logo / brand
+                dbc.Row(
+                    [
+                        dbc.Col(html.Img(src=PLOTLY_LOGO, height="30px")),
+                        dbc.Col(dbc.NavbarBrand("Home", className="ms-2")),
+                    ],
+                    align="center",
+                    className="g-0",
+                ),
+                href="/Golayad/",
+                style={"textDecoration": "none"},
+            ),
+            dbc.NavbarToggler(id="navbar-toggler", n_clicks=0),
+            dbc.NavItem(dbc.NavLink(brand, href=href, style={"color":"white"})),
+        ]
+    ),
+    color="dark",
+    dark=True,
 )
+    return navbar
+
+
+def dcc_upload():
+    return dcc.Upload(
+        id="id_upload_lab",
+        children=html.Div([
+            html.A("Upload your xlsx or pdf files", style={"color":"white"})
+        ]),
+        style={
+            'width': '100%',
+            'height': '60px',
+            'lineHeight': '60px',
+            'borderWidth': '1px',
+            'borderStyle': 'dashed',
+            'borderRadius': '5px',
+            'textAlign': 'center',
+            'margin': '10px',
+            'color':'white'
+        },
+        # Allow multiple files to be uploaded
+        multiple=True
+    )
+
+
+class templateLab(object):
+
+    """
+        Esta clase pretende generar templates para la creación de las vistas de los laboratorios en la vista Alexis´s lab
+    """
+
+    def __init__(self, name_lab):
+        self.name_lab = name_lab
+        self.header_lab = html.Div([html.H4(name_lab, className="legend_2", style={"width":"100%"}), html.Div(dcc_upload(), style={"width":"80%"})], style={"display":"flex", "justify-content":"space-evenly", "align-items":"center"})
+        self.customized_panel = []
+        self.command_board = html.Div(["command board"])
+        self.body_lab = html.Div(["Content"])
+        self.footer_lab = []
+
+    def customize_command_board(self):
+        if self.name_lab == "Statistics Lab":
+            cmd_board = self.command_board_statistics()
+        elif self.name_lab == "Supervissed learning Lab":
+            cmd_board = self.command_board_sl()
+        elif self.name_lab == "Unsupervissed learning":
+            pass
+        elif self.name_lab == "Time series & forecasting":
+            pass
+        elif self.name_lab == "Data mining":
+            cmd_board = self.command_board_dm()
+        elif self.name_lab == "Miscellaneous":
+            pass
+        self.command_board = cmd_board
+
+    def customize_panel(self):
+        self.customized_panel = html.Div([
+            dcc.Dropdown(
+                options=[{'label': 'NYC', 'value': 'NYC'}, {'label': 'MTL', 'value': 'MTL'}, {'label': 'SF', 'value': 'SF'}],
+                value='NYC',
+                id={'type': 'dropdown', 'index': 0}
+            ),
+            dcc.Checklist(
+                options=[
+                    {'label': 'New York City', 'value': 'New York City'},
+                    {'label': 'Montréal', 'value': 'Montréal'},
+                    {'label': 'San Francisco', 'value': 'San Francisco'}
+                ],
+                values=['New York City', 'Montréal'],
+                id={'type': 'checklist', 'index': 0}
+            )
+        ], style={"border-color": "white"})
+        
+    def customize_footer(self):
+        self.footer_lab = html.Div("Adding a footer", style={"border-color":"white"})
+
+    @staticmethod
+    def command_board_statistics():
+        """
+            Nos quedamos aquí (19/05/2023)
+            Modificando el command board de statistics, queda pendiente agregar dropdowns que tomaran info de los archivos cargados y estilizar
+        """
+        cbs = html.Div([html.H4("TARJET"), html.H4("VARIABLE"), html.H4("GRAPH TYPE")], className="command_board")
+        return cbs
+    
+    @staticmethod
+    def command_board_sl():
+        cbs = html.Div([html.H4("TARJET"), html.H4("MODELS"), html.H4("THIRD PART")], className="command_board")
+        return cbs
+    
+    @staticmethod
+    def command_board_dm():
+        cbs = html.Div([html.H4("TARJET")], className="command_board")
+        return cbs
+    
+    def wrap_lab(self):
+        """
+            Se requiere devolver como lista, no como html.Div() dash component
+        """
+        lab_card = [
+        self.header_lab,
+        self.command_board,
+        self.customized_panel,
+        self.body_lab,
+        self.footer_lab
+    ]
+        return lab_card
+    
+        
