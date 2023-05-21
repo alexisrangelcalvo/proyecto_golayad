@@ -77,7 +77,7 @@ lab_layout = dbc.Container(
         html.Br(),
         dbc.Row(
             [
-                dbc.Col(dbc.Card(card_content("Statistics", "lorem impsum",  badge_button("Available", "Available_b1", 1), "dark"))),
+                dbc.Col(dbc.Card(card_content("Statistics", "lorem impsum",  badge_button("Available", "Available_b1", 1)), class_name="cards2")),
                 dbc.Col(dbc.Card(card_content("Supervissed learning", "lorem ipsum", badge_button("Available", "Available_b2", 2), "dark"))),
                 dbc.Col(dbc.Card(card_content("Unsupervissed learning", "Lorem ipsum", badge_button("Soon", "Soon_b1", 3), "dark"))),
             ]
@@ -94,9 +94,24 @@ lab_layout = dbc.Container(
         ),
         html.Br(),
         html.Hr(style={"background-color": "white", "height": "4px", "border": "none"}),
-        html.Div(id="content_lab"),
+        html.Div(id="content_header_lab"),
+        dcc.Loading(
+            id="loading-3",
+            type="default",
+            color='white',
+            children=html.Div(id="labFigure_1", className='cards1')
+        ),
+        html.Br(),
+        dcc.Loading(
+            id="loading-2",
+            type="default",
+            color='white',
+            children=html.Div(id="labDatatable_1")
+        ),
+        html.Div(id="content_body_lab"),
         dcc.Store(id="current_lab"),
         dcc.Store(id="card_to_paint"),
+        dcc.Store(id="lab_files"),
         html.Hr(style={"background-color": "white", "height": "4px", "border": "none"}),
         html.Br(),
 

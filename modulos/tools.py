@@ -185,10 +185,15 @@ def navbar_function(brand, href):
 
 
 def dcc_upload():
-    return dcc.Upload(
-        id="id_upload_lab",
+    return html.Div([dcc.Upload(
+        id="upload_data_lab",
         children=html.Div([
-            html.A("Upload your xlsx or pdf files", style={"color":"white"})
+            dcc.Loading(
+            id="loading-1",
+            type="default",
+            color='white',
+            children=html.A(id = "filename_lab", style={'textAlign': 'center', 'color': 'white'})
+        )
         ]),
         style={
             'width': '100%',
@@ -203,7 +208,34 @@ def dcc_upload():
         },
         # Allow multiple files to be uploaded
         multiple=True
-    )
+    ),
+    #html.Div(id='filename_lab')
+    ])
+
+def parse_contents(contents, filename, date):
+    """
+        This function help us to manage the file to store in a dash request way
+        currently working just for .csv, .xls, y .pdf files
+    """
+    content_type, content_string = contents.split(',')
+
+    decoded = base64.b64decode(content_string)
+    try:
+        if 'csv' in filename:
+            # Assume that the user uploaded a CSV file
+            df = pd.read_csv(
+                io.StringIO(decoded.decode('utf-8')))
+        elif 'xls' in filename:
+            # Assume that the user uploaded an excel file
+            df = pd.read_excel(io.BytesIO(decoded))
+    except Exception as e:
+        print(e)
+        return html.Div([
+            'There was an error processing this file.'
+        ])
+    
+    return df.to_json(orient='records')
+
 
 
 class templateLab(object):
@@ -214,7 +246,7 @@ class templateLab(object):
 
     def __init__(self, name_lab):
         self.name_lab = name_lab
-        self.header_lab = html.Div([html.H4(name_lab, className="legend_2", style={"width":"100%"}), html.Div(dcc_upload(), style={"width":"80%"})], style={"display":"flex", "justify-content":"space-evenly", "align-items":"center"})
+        self.header_lab = html.Div([html.H4(name_lab, className="legend_2", style={"width":"100%"}), html.Div(dcc_upload(), style={"width":"80%"})], style={"display":"flex", "justify-content":"space-evenly", "align-items":"center", "margin-bottom":"10px"}, className='cards1')
         self.customized_panel = []
         self.command_board = html.Div(["command board"])
         self.body_lab = html.Div(["Content"])
@@ -262,7 +294,39 @@ class templateLab(object):
             Nos quedamos aquí (19/05/2023)
             Modificando el command board de statistics, queda pendiente agregar dropdowns que tomaran info de los archivos cargados y estilizar
         """
-        cbs = html.Div([html.H4("TARJET"), html.H4("VARIABLE"), html.H4("GRAPH TYPE")], className="command_board")
+        cbs = html.Div([
+            html.Br(),
+            html.H4("Command board", style={"margin-top":"5px"}),
+            
+            html.Div([html.H5(["Dataset info: lorem ipsum, lorem ipsum, lorem ipsum"], id="r1_c1_labs", style={"display":"flex", "justify-content":"space-evenly", "align-items":"center","width":"15%"}),
+                      html.Div([
+                        html.Div([html.P("Tarjet", style={"color":"white", "font-size":"15px", "margin-bottom":"-1px"}), 
+                                  html.Div(dcc.Dropdown(['New York City', 'Montreal', 'San Francisco'], placeholder="Select tarjet"),  id="r1_c2_labs")
+                                  ], style={"width":"30%"}),
+                        html.Div([html.P("Variable", style={"color":"white", "font-size":"15px", "margin-bottom":"-1px"}),
+                                html.Div(dcc.Dropdown(['New York City', 'Montreal', 'San Francisco'], placeholder="Select variable"),  id="r1_c3_labs")
+                        ], style={"width":"30%"}),
+                        html.Div([html.P("Type of graph", style={"color":"white", "font-size":"15px", "margin-bottom":"-1px"}),
+                                html.Div(dcc.Dropdown(['New York City', 'Montreal', 'San Francisco'], placeholder="Select type of graph"),  id="r1_c4_labs")
+                        ], style={"width":"30%"}),
+                        dbc.Checklist(options=[{"label": "OLS", "value": 2}], id="switches_input_lab1", switch=True,  style={"color":"white", "width":"5%"}),
+                      ], style={"display":"flex", "justify-content":"space-evenly", "align-items":"center","width":"60%"}),
+                      html.Div([
+                            dbc.Button("Create!", color="info", className="me-1", id = "button_graph_1"),
+                            #dbc.Button("Add dimention", color="secondary", className="me-1", style={"width":"50%", "font-size":"10px"}),
+                            html.Div([
+                                dbc.Checklist(options=[{"label": "", "value": 2}], id="switches_input_lab2", switch=True,  style={"color":"white", "width":"5%", "margin":"auto"}),
+                                html.P("Add dimention",  style={"font-size":"12px", "color":"white", "margin":"auto", "text-align": "center"})
+                            ])
+                            
+                      ], style={"display":"flex", "justify-content":"center", "align-items":"center","width":"20%"}),
+                        
+                        ], 
+                        className="command_board"), 
+            html.Div(id="new_dimensions_lab"),
+            html.Br()
+                        
+                        ], className="card_1")
         return cbs
     
     @staticmethod
@@ -288,4 +352,65 @@ class templateLab(object):
     ]
         return lab_card
     
-        
+
+def determinar_tipo_variable(columna):
+    unique_values = columna.unique()
+    num_unique_values = len(unique_values)
+    is_quantitative = pd.api.types.is_numeric_dtype(columna)
+    
+    if is_quantitative:
+        return 'Cuantitativa'
+    elif num_unique_values <= 10:
+        return 'Cualitativa'
+    else:
+        return 'No determinado'
+    
+
+def datatable_lab(df):
+    return dash_table.DataTable(
+            data=df.to_dict('records'),
+            columns=[{"name": i, "id": i} for i in df.columns],
+            sort_action='native',
+            filter_action="native",
+            sort_mode='multi',
+            selected_rows=[],
+            page_action='native',
+            # dividir el paginado por el num de metricas para cada cliente
+            page_size=5,
+            editable=True,
+
+            style_cell={
+                'height': 'auto',
+                'whiteSpace': 'normal',
+                'font-family': 'Poppins',
+                'font-size': '11.3px',
+                'font-weight': 'bold',
+                'z-index': '0',
+                'textAlign': 'center'
+            },
+
+            css=[{
+                'selector': '.dash-table-tooltip',
+                'rule': 'background-color: #000000; font-family: monospace; color: white',
+                'z-index': '0', 'position': 'absolute', 'border': 'solid', 'border-color': 'black'
+            }],
+
+            style_header={
+                'fontWeight': 'bold',
+                'textAlign': 'center',
+                'backgroundColor': 'rgb(30, 30, 30)',
+                'color': 'white'
+            },
+            style_data_conditional=[
+            {
+                'backgroundColor': 'rgb(114, 114, 114)',
+                'color': 'white',
+            },
+            {
+                'if': {'row_index': 'odd'},
+                'backgroundColor': 'rgb(59, 59, 59)',
+                'color': 'white',
+            },
+
+        ]
+        )
