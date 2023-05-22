@@ -48,16 +48,16 @@ h4 {
 
 .cards1 {
     background: linear-gradient(to right top, #080808, rgba(13, 14, 14, 0.452));
-    border: solid;
-    border-width: 1px;
+    /* border: solid;
+    border-width: 1px; */
     /* border-color: white; */
     border-radius: 5px;
 }
 
 .cards2 {
     background: linear-gradient(to right top, #272626, rgba(31, 37, 37, 0.747));
-    border: solid;
-    border-width: 1px;
+    /* border: solid;
+    border-width: 1px; */
     /* border-color: white; */
     border-radius: 5px;
 }

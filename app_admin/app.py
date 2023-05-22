@@ -126,7 +126,7 @@ def reload_filename(contents, filename):
         Callback que muestra y actualiza el estado de carga de archivos
     """
     if contents is None:
-        return html.A(f'Drag and Drop or select your files here!')
+        return html.A(f'Drag and Drop or select you .xlsx or .xls file here!')
     elif "xls" in  filename[0] or "xlsx" in  filename[0] or "pdf" in  filename[0]:
         return html.A(f'"{filename[0]}" file processed succesfully!')
     else:
@@ -175,7 +175,9 @@ def storing_loaded_files(data, filename):
 
             datatable_2 = datatable_lab(df2) 
 
-            dataset_info = html.H5("Dataset info: with changes")
+            filas_df, columnas_df = df.shape
+
+            dataset_info = html.H5(f"Dataset info: {columnas_df} columnas, {filas_df} filas")
             lista_graficas = ["Scatter plot", "Bar graph"]
             
             return dataset_info, dcc.Dropdown(df_columns, placeholder="Select tarjet", id="r1_c2_labs"), dcc.Dropdown(df_columns, placeholder="Select variable",  id="r1_c3_labs"), dcc.Dropdown(lista_graficas, placeholder="Select type of graph",  id="r1_c4_labs"), datatable_2
@@ -208,18 +210,24 @@ def add_dimentions(data, switch):
     
 @ app.callback(
     [Output('labFigure_1', 'children')],
-    [Input('lab_files', 'data'), Input('r1_c2_labs', 'value'), Input('r1_c3_labs', 'value'), Input('r1_c4_labs', 'value'), Input('r1_c5_labs', 'value'), Input('r1_c6_labs', 'value'), Input('r1_c7_labs', 'value'), Input('button_graph_1', 'n_clicks')])
-def lab_figure(data, tarjet, variable, type_graph, color, size, hover_d, nclick):
-    print(f"hover_d -> x={tarjet}, y={variable}, type={type_graph}")
+    [Input('lab_files', 'data'), Input('r1_c2_labs', 'value'), Input('r1_c3_labs', 'value'), Input('r1_c4_labs', 'value'), Input('r1_c5_labs', 'value'), Input('r1_c6_labs', 'value'), Input('r1_c7_labs', 'value'), Input('button_graph_1', 'n_clicks'), Input('switches_input_lab1', 'value')])
+def lab_figure(data, tarjet, variable, type_graph, color, size, hover_d, nclick, trendLine):
+    #print(f"hover_d -> x={tarjet}, y={variable}, type={type_graph}")
     if nclick is not None and tarjet is not None and variable is not None:
-        print("nclick")
-        print(nclick)
         df = pd.read_json(data[0], orient='records')
         # creando la figura personalizada
+        if trendLine is not None:
+            tl = 'with trend line' if trendLine == [2] else ''
+            trendLine = "ols" if trendLine == [2] else None
+        else:
+            tl = ''
+            trendLine = None
+        suptitle = f"{'color:' if color is not None else ''}{color if color is not None else ''}, {'size:' if size is not None else ''}{size if size is not None else ''}, {'hover:' if hover_d is not None else ''}{hover_d if hover_d is not None else ''}"
         fig = px.scatter(df, x=tarjet, y=variable, color=color,
-                 size=size, hover_data=[hover_d])
+                 size=size, hover_data=[hover_d], trendline=trendLine)
         fig.update_layout(
-                            title="title_graph",
+                            title=f"<b>{tarjet} vs {variable}</b> {tl}      <sup>{suptitle}</sup>",
+                            #subtitle="Relación entre el total de la cuenta y la propina",
                             plot_bgcolor='rgba(0, 0, 0, 0)',
                             paper_bgcolor='rgba(0, 0, 0, 0)',
                             font=dict(
@@ -235,10 +243,8 @@ def lab_figure(data, tarjet, variable, type_graph, color, size, hover_d, nclick)
         return [dcc.Graph(figure=fig)]
     raise PreventUpdate
 
-
-
-
-    
-    
-
-#dff = pd.read_json(data[0], orient='records')
+# @ app.callback(
+#     [Output('content_body_lab', 'children')],
+#     [Input('lab_files', 'data'), Input('r1_c2_labs', 'value'), Input('r1_c3_labs', 'value'), Input('r1_c4_labs', 'value'), Input('r1_c5_labs', 'value'), Input('r1_c6_labs', 'value'), Input('r1_c7_labs', 'value'), Input('button_graph_1', 'n_clicks'), Input('switches_input_lab1', 'value')])
+# def lab_figure(data, tarjet, variable, type_graph, color, size, hover_d, nclick, trendLine):
+#     pass

@@ -61,20 +61,23 @@ def card_introduction(title, ptext, suptitle):
                     className="col-md-8",
                 ),
             ],
-            className="g-0 d-flex align-items-center", style={"background-color":"#1a1d20"},
+            className="g-0 d-flex align-items-center",
         )
     ],
-    className="mb-3",
-    style={"maxWidth": "540px", "color":"white", "background-color":"#212428"},
+    className="mb-3 cards1",
+    style={"maxWidth": "540px", "color":"white"},
 )
 
     return card
 
 #, style={"border":"solid", "border-color":"black","background-color":"black", "color":"white", "border-radius":"10px", "margin":"auto", "width":"40%"}
-def card_content(header, ptext, badge = None, bcgc = False):
+def card_content(header, ptext, badge = None, bcgc = False, display=False):
+    #, "display":"flex", "justify-content":"space-between"
+
+    stl = {"border-color":"white", "color":"white", "display":"flex", "justify-content":"space-between"} if display else {"border-color":"white", "color":"white"}
 
     card_content_expl = [
-        dbc.CardHeader([html.H5(header, className="legend_2", style={"font-size":"20px"}), badge], style={"border-color":"white", "color":"white"}),
+        dbc.CardHeader([html.H5(header, className="legend_2", style={"font-size":"20px"}), badge], style=stl),
         dbc.CardBody(
             [
                 #html.H5(title, className="card-title", style={"color":"white"}),
@@ -87,7 +90,7 @@ def card_content(header, ptext, badge = None, bcgc = False):
         ),
     ]
 
-    return dbc.Row([dbc.Col(dbc.Card(card_content_expl, color=bcgc, inverse=True))]) if bcgc else dbc.Row([dbc.Card(card_content_expl, color="light", outline=True, style={"background-color":"transparent"})])
+    return dbc.Row([dbc.Col(dbc.Card(card_content_expl, color=bcgc, inverse=True))], className="cards1") if bcgc else dbc.Row([dbc.Card(card_content_expl, color="light", outline=True, style={"background-color":"transparent", "border":"none"})], className="cards1")
 
 
 def badge_button(text, id, id_num):
@@ -246,47 +249,34 @@ class templateLab(object):
 
     def __init__(self, name_lab):
         self.name_lab = name_lab
-        self.header_lab = html.Div([html.H4(name_lab, className="legend_2", style={"width":"100%"}), html.Div(dcc_upload(), style={"width":"80%"})], style={"display":"flex", "justify-content":"space-evenly", "align-items":"center", "margin-bottom":"10px"}, className='cards1')
+        self.header_lab = html.Div([html.H4(name_lab, className="legend_2", style={"width":"80%"}), html.Div(dcc_upload(), style={"width":"80%", "margin-right":"10px"})], style={"display":"flex", "justify-content":"space-evenly", "align-items":"center", "margin-bottom":"10px"}, className='cards1')
         self.customized_panel = []
         self.command_board = html.Div(["command board"])
-        self.body_lab = html.Div(["Content"])
+        self.body_lab = html.Div()
         self.footer_lab = []
 
     def customize_command_board(self):
         if self.name_lab == "Statistics Lab":
             cmd_board = self.command_board_statistics()
+            body_lab = self.customize_body_statistics()
         elif self.name_lab == "Supervissed learning Lab":
             cmd_board = self.command_board_sl()
+            body_lab = self.customize_body_sl()
         elif self.name_lab == "Unsupervissed learning":
             pass
         elif self.name_lab == "Time series & forecasting":
             pass
         elif self.name_lab == "Data mining":
             cmd_board = self.command_board_dm()
+            body_lab = self.customize_body_dm()
         elif self.name_lab == "Miscellaneous":
             pass
         self.command_board = cmd_board
+        self.body_lab = body_lab
 
-    def customize_panel(self):
-        self.customized_panel = html.Div([
-            dcc.Dropdown(
-                options=[{'label': 'NYC', 'value': 'NYC'}, {'label': 'MTL', 'value': 'MTL'}, {'label': 'SF', 'value': 'SF'}],
-                value='NYC',
-                id={'type': 'dropdown', 'index': 0}
-            ),
-            dcc.Checklist(
-                options=[
-                    {'label': 'New York City', 'value': 'New York City'},
-                    {'label': 'Montréal', 'value': 'Montréal'},
-                    {'label': 'San Francisco', 'value': 'San Francisco'}
-                ],
-                values=['New York City', 'Montréal'],
-                id={'type': 'checklist', 'index': 0}
-            )
-        ], style={"border-color": "white"})
-        
     def customize_footer(self):
         self.footer_lab = html.Div("Adding a footer", style={"border-color":"white"})
+
 
     @staticmethod
     def command_board_statistics():
@@ -298,7 +288,7 @@ class templateLab(object):
             html.Br(),
             html.H4("Command board", style={"margin-top":"5px"}),
             
-            html.Div([html.H5(["Dataset info: lorem ipsum, lorem ipsum, lorem ipsum"], id="r1_c1_labs", style={"display":"flex", "justify-content":"space-evenly", "align-items":"center","width":"15%"}),
+            html.Div([html.H5(["Upload the file!"], id="r1_c1_labs", style={"display":"flex", "justify-content":"space-evenly", "align-items":"center","width":"15%"}),
                       html.Div([
                         html.Div([html.P("Tarjet", style={"color":"white", "font-size":"15px", "margin-bottom":"-1px"}), 
                                   html.Div(dcc.Dropdown(['New York City', 'Montreal', 'San Francisco'], placeholder="Select tarjet"),  id="r1_c2_labs")
@@ -309,7 +299,7 @@ class templateLab(object):
                         html.Div([html.P("Type of graph", style={"color":"white", "font-size":"15px", "margin-bottom":"-1px"}),
                                 html.Div(dcc.Dropdown(['New York City', 'Montreal', 'San Francisco'], placeholder="Select type of graph"),  id="r1_c4_labs")
                         ], style={"width":"30%"}),
-                        dbc.Checklist(options=[{"label": "OLS", "value": 2}], id="switches_input_lab1", switch=True,  style={"color":"white", "width":"5%"}),
+                        dbc.Checklist(options=[{"label": "Trend line", "value": 2}], id="switches_input_lab1", switch=True,  style={"color":"white", "width":"5%"}),
                       ], style={"display":"flex", "justify-content":"space-evenly", "align-items":"center","width":"60%"}),
                       html.Div([
                             dbc.Button("Create!", color="info", className="me-1", id = "button_graph_1"),
@@ -326,8 +316,26 @@ class templateLab(object):
             html.Div(id="new_dimensions_lab"),
             html.Br()
                         
-                        ], className="card_1")
+                        ], className="cards1")
         return cbs
+    
+    @staticmethod
+    def customize_body_statistics():
+        """
+            Using tabs to manage with statistcs test (univarite, bivariate, multivariate)
+        """
+        body_lab = html.Div([
+        dcc.Tabs(id="tabs-styled-with-inline", value='tab-1', children=[
+            dcc.Tab(label='Univarite', value='tab-1', style=tab_style, selected_style=tab_selected_style),
+            dcc.Tab(label='Bivariate', value='tab-2', style=tab_style, selected_style=tab_selected_style),
+            dcc.Tab(label='Multivariate', value='tab-3', style=tab_style, selected_style=tab_selected_style),
+            dcc.Tab(label='Other', value='tab-4', style=tab_style, selected_style=tab_selected_style),
+        ], style=tabs_styles),
+        html.Div(id='tabs-content-inline')
+        ])
+
+        return body_lab
+    
     
     @staticmethod
     def command_board_sl():
@@ -335,9 +343,42 @@ class templateLab(object):
         return cbs
     
     @staticmethod
+    def customize_body_sl():
+        """
+            Using tabs to manage with statistcs test (univarite, bivariate, multivariate)
+        """
+        body_lab = html.Div([
+        dcc.Tabs(id="tabs-styled-with-inline", value='tab-1', children=[
+            dcc.Tab(label='Tab1', value='tab-1', style=tab_style, selected_style=tab_selected_style),
+            dcc.Tab(label='Tab2', value='tab-2', style=tab_style, selected_style=tab_selected_style),
+            dcc.Tab(label='Tab3', value='tab-3', style=tab_style, selected_style=tab_selected_style),
+            dcc.Tab(label='Tab4', value='tab-4', style=tab_style, selected_style=tab_selected_style),
+        ], style=tabs_styles),
+        html.Div(id='tabs-content-inline')
+        ])
+
+        return body_lab
+    
+    @staticmethod
     def command_board_dm():
         cbs = html.Div([html.H4("TARJET")], className="command_board")
         return cbs
+    
+    @staticmethod
+    def customize_body_dm():
+        """
+            Using tabs to manage with statistcs test (univarite, bivariate, multivariate)
+        """
+        body_lab = html.Div([
+        dcc.Tabs(id="tabs-styled-with-inline", value='tab-1', children=[
+            dcc.Tab(label='Tab1', value='tab-1', style=tab_style, selected_style=tab_selected_style),
+            dcc.Tab(label='Tab2', value='tab-2', style=tab_style, selected_style=tab_selected_style),
+            dcc.Tab(label='Tab3', value='tab-3', style=tab_style, selected_style=tab_selected_style),
+            dcc.Tab(label='Tab4', value='tab-4', style=tab_style, selected_style=tab_selected_style),
+        ], style=tabs_styles),
+        html.Div(id='tabs-content-inline')
+        ])
+        return body_lab
     
     def wrap_lab(self):
         """
@@ -346,7 +387,7 @@ class templateLab(object):
         lab_card = [
         self.header_lab,
         self.command_board,
-        self.customized_panel,
+        #self.customized_panel,
         self.body_lab,
         self.footer_lab
     ]
@@ -414,3 +455,21 @@ def datatable_lab(df):
 
         ]
         )
+
+
+tabs_styles = {
+    'height': '44px'
+}
+tab_style = {
+    'borderBottom': '1px solid #d6d6d6',
+    'padding': '6px',
+    'fontWeight': 'bold'
+}
+
+tab_selected_style = {
+    'borderTop': '1px solid #d6d6d6',
+    'borderBottom': '1px solid #d6d6d6',
+    'backgroundColor': '#119DFF',
+    'color': 'white',
+    'padding': '6px'
+}

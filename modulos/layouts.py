@@ -52,13 +52,16 @@ resume_layout = html.Div([
 
 
 
-        html.Div([
-                    card_content("Software development & Databases", "Apps, dashboards, API's or Scripts development for process automation and CRUD & ETL using language Sql", html.Div([dbc.Badge("Python", color="warning", className="me-1"), dbc.Badge("Sql", color="success", className="me-1"), dbc.Badge("Linux", color="dark", className="me-1"), dbc.Badge("Git", color="danger", className="me-1")])),
-                    card_content("Data & Risk Analyst", "Data extraction or data mining, data management, data analysis and big data. KPI's, financial ratios, study cash flow and vintage analysis", html.Div([dbc.Badge("Python", color="warning", className="me-1"), dbc.Badge("R", color="primary", className="me-1")])),
-                    card_content("Statistic", "Exploratory data analysis, Descriptive and Inferencial statistics, Test hypothesis, Time series, Supervised learning and Explanatory Model Analysis", html.Div([dbc.Badge("Python", color="warning", className="me-1"), dbc.Badge("R", color="primary", className="me-1")])),
+        html.Div([  html.Div(style={"height":"5px"}),
+                    card_content("Software development & Databases", "Apps, dashboards, API's or Scripts development for process automation and CRUD & ETL using language Sql", html.Div([dbc.Badge("Python", color="warning", className="me-1"), dbc.Badge("Sql", color="success", className="me-1"), dbc.Badge("Linux", color="dark", className="me-1"), dbc.Badge("Git", color="danger", className="me-1")]), display=True),
+                    html.Div(style={"height":"5px"}),
+                    card_content("Data & Risk Analyst", "Data extraction or data mining, data management, data analysis and big data. KPI's, financial ratios, study cash flow and vintage analysis", html.Div([dbc.Badge("Python", color="warning", className="me-1"), dbc.Badge("R", color="primary", className="me-1")]), display=True),
+                    html.Div(style={"height":"5px"}),
+                    card_content("Statistic", "Exploratory data analysis, Descriptive and Inferencial statistics, Test hypothesis, Time series, Supervised learning and Explanatory Model Analysis", html.Div([dbc.Badge("Python", color="warning", className="me-1"), dbc.Badge("R", color="primary", className="me-1")]), display=True),
                     #card_content("Databases", "CRUD & ETL using language Sql"),
+                    html.Div(style={"height":"5px"}),
                     card_content("How all above works together?", 
-                                 "One of my biggest professional experiences has been developing apps for instant credit analyst and processes automation like reports or visualizations (clients portfolio, assess the impact of credit politics or market campaign results) using python (dash and flask). It was a game changer in the nacional credit market agains long process that usually takes the credit asses of prospect profile due to fast response normally implies increase market share."),
+                                 "One of my biggest professional experiences has been developing apps for instant credit analyst and processes automation like reports or visualizations (clients portfolio, assess the impact of credit politics or market campaign results) using python (dash and flask). It was a game changer in the nacional credit market agains long process that usually takes the credit asses of prospect profile due to fast response normally implies increase market share.", True),
                         
                         ], style={"width":"55%"})
 
@@ -77,9 +80,9 @@ lab_layout = dbc.Container(
         html.Br(),
         dbc.Row(
             [
-                dbc.Col(dbc.Card(card_content("Statistics", "lorem impsum",  badge_button("Available", "Available_b1", 1)), class_name="cards2")),
-                dbc.Col(dbc.Card(card_content("Supervissed learning", "lorem ipsum", badge_button("Available", "Available_b2", 2), "dark"))),
-                dbc.Col(dbc.Card(card_content("Unsupervissed learning", "Lorem ipsum", badge_button("Soon", "Soon_b1", 3), "dark"))),
+                dbc.Col(dbc.Card(card_content("Statistics", "lorem impsum",  badge_button("Available", "Available_b1", 1)), class_name="cards1")),
+                dbc.Col(dbc.Card(card_content("Supervissed learning", "lorem ipsum", badge_button("Available", "Available_b2", 2)), class_name="cards1")),
+                dbc.Col(dbc.Card(card_content("Unsupervissed learning", "Lorem ipsum", badge_button("Soon", "Soon_b1", 3)), class_name="cards1")),
             ]
         ),
         html.Br(),
@@ -87,14 +90,15 @@ lab_layout = dbc.Container(
 
         dbc.Row(
             [
-                dbc.Col(dbc.Card(card_content("Time series & forecasting", "Lorem ipsum", badge_button("Soon", "Soon_b2", 4), "dark"))),
-                dbc.Col(dbc.Card(card_content("Data mining", "Lorem ipsum", badge_button("Available", "Available_b3", 5), "dark"))),
-                dbc.Col(dbc.Card(card_content("Miscellaneous", "Lorem ipsum", badge_button("Soon", "Soon_b4", 6), "dark"))),
+                dbc.Col(dbc.Card(card_content("Time series & forecasting", "Lorem ipsum", badge_button("Soon", "Soon_b2", 4)), class_name="cards1")),
+                dbc.Col(dbc.Card(card_content("Data mining", "Lorem ipsum", badge_button("Available", "Available_b3", 5)), class_name="cards1")),
+                dbc.Col(dbc.Card(card_content("Miscellaneous", "Lorem ipsum", badge_button("Soon", "Soon_b4", 6)), class_name="cards1")),
             ]
         ),
         html.Br(),
         html.Hr(style={"background-color": "white", "height": "4px", "border": "none"}),
         html.Div(id="content_header_lab"),
+        html.Br(),
         dcc.Loading(
             id="loading-3",
             type="default",
@@ -102,13 +106,14 @@ lab_layout = dbc.Container(
             children=html.Div(id="labFigure_1", className='cards1')
         ),
         html.Br(),
+        #html.Div(id="content_body_lab"),
         dcc.Loading(
             id="loading-2",
             type="default",
             color='white',
             children=html.Div(id="labDatatable_1")
         ),
-        html.Div(id="content_body_lab"),
+        html.Div(id="content_body2_lab"),
         dcc.Store(id="current_lab"),
         dcc.Store(id="card_to_paint"),
         dcc.Store(id="lab_files"),
