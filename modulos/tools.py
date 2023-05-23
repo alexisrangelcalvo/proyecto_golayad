@@ -105,9 +105,13 @@ def badge_button(text, id, id_num):
 def encontrar_diferencia(lista1, lista2):
     lista1, lista2 = [0 if elemento is None else elemento for elemento in lista1], [0 if elemento is None else elemento for elemento in lista2]
     for i in range(len(lista1)):
+        # print("lista1")
+        # print(lista1)
+        # print("lista2")
+        # print(lista2)
         if lista1[i] > lista2[i]:
             return i
-    return None
+    return i
 
 
 def button_download_resume():
@@ -285,8 +289,7 @@ class templateLab(object):
             Modificando el command board de statistics, queda pendiente agregar dropdowns que tomaran info de los archivos cargados y estilizar
         """
         cbs = html.Div([
-            html.Br(),
-            html.H4("Command board", style={"margin-top":"5px"}),
+            #html.H4("Command board", style={"margin-top":"5px"}),
             
             html.Div([html.H5(["Upload the file!"], id="r1_c1_labs", style={"display":"flex", "justify-content":"space-evenly", "align-items":"center","width":"15%"}),
                       html.Div([
@@ -314,28 +317,73 @@ class templateLab(object):
                         ], 
                         className="command_board"), 
             html.Div(id="new_dimensions_lab"),
-            html.Br()
+            #html.Br()
                         
                         ], className="cards1")
-        return cbs
+        return html.Div([html.H4("Graph statistical analysis", style={"margin-top":"5px"}, className="cards1"), cbs])
     
     @staticmethod
     def customize_body_statistics():
         """
-            Using tabs to manage with statistcs test (univarite, bivariate, multivariate)
+            desinging the statistical body 
         """
         body_lab = html.Div([
-        dcc.Tabs(id="tabs-styled-with-inline", value='tab-1', children=[
-            dcc.Tab(label='Univarite', value='tab-1', style=tab_style, selected_style=tab_selected_style),
-            dcc.Tab(label='Bivariate', value='tab-2', style=tab_style, selected_style=tab_selected_style),
-            dcc.Tab(label='Multivariate', value='tab-3', style=tab_style, selected_style=tab_selected_style),
-            dcc.Tab(label='Other', value='tab-4', style=tab_style, selected_style=tab_selected_style),
-        ], style=tabs_styles),
-        html.Div(id='tabs-content-inline')
+
+        html.Br(),
+        dcc.Loading(
+            id="loading-3",
+            type="default",
+            color='white',
+            children=html.Div(id="labFigure_1", className='cards1')
+        ),
+        html.Br(),
+        html.H4("Statistical tests", style={"margin-top":"5px"}, className="cards1"), 
+        #html.Br(),
+        # html.Div([
+        # dcc.Tabs(id="tabs_body", value='tab-1', children=[
+        #     dcc.Tab(label='Univarite', value='tab-1', style=tab_style, selected_style=tab_selected_style),
+        #     dcc.Tab(label='Bivariate', value='tab-2', style=tab_style, selected_style=tab_selected_style),
+        #     dcc.Tab(label='Multivariate', value='tab-3', style=tab_style, selected_style=tab_selected_style),
+        #     dcc.Tab(label='Other', value='tab-4', style=tab_style, selected_style=tab_selected_style),
+        # ], style=tabs_styles),
+        # #html.Div(id='tabs_body_content')
+        # ], className="cards1")
         ])
 
-        return body_lab
-    
+        tcbb = html.Div([
+            #html.H4("Command board", style={"margin-top":"5px"}),
+            
+            html.Div([html.H5(["Desing yout statistical test"], id="r2_c1_labs", style={"display":"flex", "justify-content":"space-evenly", "align-items":"center","width":"15%"}),
+                      html.Div([
+                        html.Div([html.P("Variable 1", style={"color":"white", "font-size":"15px", "margin-bottom":"-1px"}), 
+                                  html.Div(dcc.Dropdown(['New York City', 'Montreal', 'San Francisco'], placeholder="Select variable"),  id="r2_c2_labs")
+                                  ], style={"width":"20%"}),
+                        html.Div([html.P("Variable 2", style={"color":"white", "font-size":"15px", "margin-bottom":"-1px"}),
+                                html.Div(dcc.Dropdown(['New York City', 'Montreal', 'San Francisco'], placeholder="Select variable"),  id="r2_c3_labs")
+                        ], style={"width":"20%"}),
+                        html.Div([html.P("Variable 3", style={"color":"white", "font-size":"15px", "margin-bottom":"-1px"}),
+                                html.Div(dcc.Dropdown(['New York City', 'Montreal', 'San Francisco'], placeholder="Select variable"),  id="r2_c4_labs")
+                        ], style={"width":"20%"}),
+                        html.Div([html.P("Test type", style={"color":"white", "font-size":"15px", "margin-bottom":"-1px"}),
+                                html.Div(dcc.Dropdown(['Normality (1V)', "Homoscedasticity (1V)", "ANOVA (2V)", "T-test (2V)", "U-test (2V)", "Correlation (2V | 3V)", "Multicollinearity (2V | 3V)"], placeholder="Select test type",  id="r2_c5_labs"))
+                        ], style={"width":"30%"}),
+                      ], style={"display":"flex", "justify-content":"space-evenly", "align-items":"center","width":"70%"}),
+                      html.Div([
+                            dbc.Button("Create!", color="info", className="me-1", id = "button_body_1"),
+                            
+                      ], style={"display":"flex", "justify-content":"center", "align-items":"center","width":"10%"}),
+                        
+                        ], 
+                        className="command_board"), 
+                        
+                        ], className="cards1")
+
+        return html.Div([
+            body_lab,
+            #html.Br(),
+            tcbb,
+            html.Div(id="statistical_test"),
+        ])
     
     @staticmethod
     def command_board_sl():
@@ -408,7 +456,7 @@ def determinar_tipo_variable(columna):
     
 
 def datatable_lab(df):
-    return dash_table.DataTable(
+    table =  dash_table.DataTable(
             data=df.to_dict('records'),
             columns=[{"name": i, "id": i} for i in df.columns],
             sort_action='native',
@@ -430,11 +478,11 @@ def datatable_lab(df):
                 'textAlign': 'center'
             },
 
-            css=[{
-                'selector': '.dash-table-tooltip',
-                'rule': 'background-color: #000000; font-family: monospace; color: white',
-                'z-index': '0', 'position': 'absolute', 'border': 'solid', 'border-color': 'black'
-            }],
+            # css=[{
+            #     'selector': '.dash-table-tooltip',
+            #     'rule': 'background-color: #080808; font-family: monospace; color: black',
+            #     'z-index': '0', 'position': 'absolute', 'border': 'solid', 'border-color': 'black'
+            # }],
 
             style_header={
                 'fontWeight': 'bold',
@@ -455,6 +503,10 @@ def datatable_lab(df):
 
         ]
         )
+    
+    return html.Div([
+        html.H4("Main statistics in study", style={"margin-top":"5px"}, className="cards1"),
+        table])
 
 
 tabs_styles = {

@@ -147,7 +147,7 @@ def loading_lab_files(list_of_contents, list_of_names, list_of_dates):
         return children
     
 @ app.callback(
-    [Output('r1_c1_labs', 'children'), Output('r1_c2_labs', 'children'), Output('r1_c3_labs', 'children'), Output('r1_c4_labs', 'children'), Output('labDatatable_1', 'children')],
+    [Output('r1_c1_labs', 'children'), Output('r1_c2_labs', 'children'), Output('r1_c3_labs', 'children'), Output('r1_c4_labs', 'children'), Output('labDatatable_1', 'children'), Output('info_variables', 'data'), Output('r2_c2_labs', 'children'), Output('r2_c3_labs', 'children'), Output('r2_c4_labs', 'children')],
     [Input('lab_files', 'data')], [State('upload_data_lab', 'filename')])
 def storing_loaded_files(data, filename):
     """
@@ -180,12 +180,8 @@ def storing_loaded_files(data, filename):
             dataset_info = html.H5(f"Dataset info: {columnas_df} columnas, {filas_df} filas")
             lista_graficas = ["Scatter plot", "Bar graph"]
             
-            return dataset_info, dcc.Dropdown(df_columns, placeholder="Select tarjet", id="r1_c2_labs"), dcc.Dropdown(df_columns, placeholder="Select variable",  id="r1_c3_labs"), dcc.Dropdown(lista_graficas, placeholder="Select type of graph",  id="r1_c4_labs"), datatable_2
-        if "pdf" in filename:
-            """
-                Habilitar para recibir pdfs y minar archivo
-            """
-            raise PreventUpdate
+            return dataset_info, dcc.Dropdown(df_columns, placeholder="Select tarjet", id="r1_c2_labs"), dcc.Dropdown(df_columns, placeholder="Select variable",  id="r1_c3_labs"), dcc.Dropdown(lista_graficas, placeholder="Select type of graph",  id="r1_c4_labs"), datatable_2, df_columns, dcc.Dropdown(df_columns, placeholder="Select variable", id="r2_c2_labs"), dcc.Dropdown(df_columns, placeholder="Select variable", id="r2_c3_labs"), dcc.Dropdown(df_columns, placeholder="Select variable", id="r2_c4_labs")
+
     raise PreventUpdate
 
 @app.callback(
@@ -243,8 +239,17 @@ def lab_figure(data, tarjet, variable, type_graph, color, size, hover_d, nclick,
         return [dcc.Graph(figure=fig)]
     raise PreventUpdate
 
-# @ app.callback(
-#     [Output('content_body_lab', 'children')],
-#     [Input('lab_files', 'data'), Input('r1_c2_labs', 'value'), Input('r1_c3_labs', 'value'), Input('r1_c4_labs', 'value'), Input('r1_c5_labs', 'value'), Input('r1_c6_labs', 'value'), Input('r1_c7_labs', 'value'), Input('button_graph_1', 'n_clicks'), Input('switches_input_lab1', 'value')])
-# def lab_figure(data, tarjet, variable, type_graph, color, size, hover_d, nclick, trendLine):
-#     pass
+
+
+@ app.callback(
+    [Output('statistical_test', 'children')],
+    [Input('lab_files', 'data'), Input('button_body_1', 'n_clicks'), Input('r2_c2_labs', 'value'), Input('r2_c3_labs', 'value'), Input('r2_c4_labs', 'value'), Input('r2_c5_labs', 'value')], [State('upload_data_lab', 'filename')])
+def statistics_tests(data, click, variable_1, variable_2, variable_3, test, filename):
+    if click is None:
+        raise PreventUpdate
+    if "xls" not in filename[0] or "xlsx" not in filename[0]:
+        raise PreventUpdate
+    df = pd.read_json(data[0], orient='records')
+    print(f"variable_1 -> {variable_1}, variable_2 -> {variable_2}, variable_3 -> {variable_3}, test->{test}")
+    raise PreventUpdate
+    

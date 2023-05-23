@@ -99,13 +99,6 @@ lab_layout = dbc.Container(
         html.Hr(style={"background-color": "white", "height": "4px", "border": "none"}),
         html.Div(id="content_header_lab"),
         html.Br(),
-        dcc.Loading(
-            id="loading-3",
-            type="default",
-            color='white',
-            children=html.Div(id="labFigure_1", className='cards1')
-        ),
-        html.Br(),
         #html.Div(id="content_body_lab"),
         dcc.Loading(
             id="loading-2",
@@ -113,10 +106,13 @@ lab_layout = dbc.Container(
             color='white',
             children=html.Div(id="labDatatable_1")
         ),
+        #html.H4("Statistical tests", style={"margin-top":"5px"}, className="cards1"), 
         html.Div(id="content_body2_lab"),
         dcc.Store(id="current_lab"),
         dcc.Store(id="card_to_paint"),
         dcc.Store(id="lab_files"),
+        dcc.Store(id="info_variables"),
+        dcc.Store(id="storaged_dataframe"),
         html.Hr(style={"background-color": "white", "height": "4px", "border": "none"}),
         html.Br(),
 
